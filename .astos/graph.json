@@ -2375,7 +2375,7 @@
   "files": 6,
   "edges": 4,
   "call_edges": 26,
-  "files_reused": 0,
+  "files_reused": 6,
   "git_changed": 0,
   "langs": [
    "python"
@@ -2383,9 +2383,9 @@
   "supported": ".py, .c, .h, .cpp, .hpp, .cc, .cxx, .dart, .rs, .js, .jsx, .ts, .tsx, .java, .go, .cs, .kt",
   "fallback": false,
   "generic_truncated": false,
-  "generated_in_s": 0.27,
-  "full_rescan": true,
+  "generated_in_s": 0.01,
+  "full_rescan": false,
   "out": "/home/tiagorabelo/isolar/.astos",
-  "scanned_at": "2026-10-28T23:33:46+00:00"
+  "scanned_at": "2026-10-28T23:38:08+00:00"
  }
 }

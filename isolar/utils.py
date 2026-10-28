@@ -20,6 +20,7 @@ __all__ = [
     "InvalidTimeError",
     "check_dependencies",
     "get_media_info",
+    "list_media",
     "run_ffmpeg",
     "parse_time",
     "format_time",
@@ -237,6 +238,47 @@ def get_media_info(path: Union[str, "os.PathLike[str]"]) -> Dict[str, Any]:
         "nb_streams": len(streams),
         "audio_streams": sum(1 for s in streams if s.get("codec_type") == "audio"),
     }
+
+
+# ---------------------------------------------------------------------------
+# Descoberta de mídia (para o menu interativo)
+# ---------------------------------------------------------------------------
+
+_VIDEO_EXTS = frozenset({
+    ".mp4", ".m4v", ".mkv", ".avi", ".mov", ".webm", ".wmv", ".flv",
+    ".mpg", ".mpeg", ".ts", ".m2ts", ".mts", ".3gp", ".3g2", ".ogv",
+    ".mxf", ".vob", ".divx", ".asf",
+})
+
+_AUDIO_EXTS = frozenset({
+    ".mp3", ".m4a", ".aac", ".wav", ".flac", ".ogg", ".oga", ".opus",
+    ".wma", ".aiff", ".aif", ".ac3", ".dts", ".amr",
+})
+
+
+def list_media(directory: Optional[Union[str, Path]] = None, kind: str = "video") -> List[Path]:
+    """Arquivos de mídia da pasta informada (padrão: cwd), ordenados por nome.
+
+    ``kind``: ``"video"`` | ``"audio"`` | ``"media"`` (vídeo + áudio).
+    """
+    folder = Path(directory or Path.cwd()).expanduser()
+    if kind == "video":
+        exts = _VIDEO_EXTS
+    elif kind == "audio":
+        exts = _AUDIO_EXTS
+    else:
+        exts = _VIDEO_EXTS | _AUDIO_EXTS
+    try:
+        files = sorted(
+            (p for p in folder.iterdir()
+             if p.is_file()
+             and not p.name.startswith(".")
+             and p.suffix.lower() in exts),
+            key=lambda p: p.name.lower(),
+        )
+    except OSError:
+        return []
+    return files
 
 
 # ---------------------------------------------------------------------------

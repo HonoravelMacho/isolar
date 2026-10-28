@@ -1,5 +1,5 @@
 # ASTOS MAP — isolar
-> Gerado por `astos` em 2026-10-28 23:33 UTC. 6 arquivos · 4 dependências · 26 chamadas inter-arquivo · langs: python.
+> Gerado por `astos` em 2026-10-28 23:38 UTC. 6 arquivos · 4 dependências · 26 chamadas inter-arquivo · langs: python.
 > Se desatualizado: `astos -f` (atualiza sem abrir o navegador). Detalhe: `.astos/graph.json`. Visual humano: `.astos/index.html`. 3D só regenera com `astos` (sem `-f`).
 > Queries baratas (use em vez de grep): `astos q --symbol X` · `astos q --cap camera` · `astos trace --from A --to B` · `astos impact --file F` · `astos caps` · `astos hubs` · `astos risks` · `astos slice <pasta>` · `astos changed` · `astos status` · `astos explain --symbol X` · `astos hotspots` · `astos dead` · `astos tests --file X`.
 

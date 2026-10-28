@@ -25,6 +25,7 @@ remover faixas de som e cortar mídias em milissegundos.
 - 🎬 **Isolar vídeo** — remove o som do vídeo, gerando um arquivo mudo.
 - ✂️ **Fast Cut** — corta/apara mídia com **cópia direta de stream** (`-c copy`): **_ultrarrápido_** e **sem perda de qualidade**.
 - 🖥️ **Dois modos de uso** — menu interativo numérico no terminal **ou** flags diretas para automação/scripting.
+- 📋 **File picker integrado** — o menu lista os arquivos de mídia da pasta atual do terminal: para isolar, é só digitar o número do arquivo (tecla `m` = caminho manual).
 - 📁 **Zero mochilão** — os arquivos gerados são salvos na pasta de trabalho atual (`cwd`) do terminal, automaticamente.
 - 🧠 **Proteção de arquivos** — nunca sobrescreve nada: se o nome existir, salva com sufixo ` (1)`, ` (2)`...
 - 📊 **Barra de progresso** limpa no terminal enquanto o FFmpeg trabalha.
@@ -88,10 +89,18 @@ Exemplo de sessão:
 
 ```
 Escolha uma opção [0-4]: 1
-📁 Caminho do arquivo [ ]: ~/Videos/seriado.mp4
-Formato [1]: 1
-✔ Pronto! Arquivo salvo em: /caminho/atual/seriado_audio.mp3
+  📁 Vídeos em /home/voce/Videos (3):
+    1) a-aula-de-hoje.mp4 (1.2 GB)
+    2) clip.mkv (89.0 MB)
+    3) seriado.mp4 (876.0 MB)
+   ── m = digitar caminho manualmente ──
+Escolha o arquivo [1]: 3
+Formato de saída [1]: 1
+  ✔ Pronto! Arquivo salvo em: /home/voce/Videos/seriado_audio.mp3
 ```
+
+> 💡 Novo em **0.0.2**: agora o menu mostra os arquivos com tamanho e você escolhe
+> pelo número — sem precisar digitar caminhos. `m` volta ao modo manual.
 
 ## ⌨️ Uso — Linha de comando (flags)
 
@@ -247,6 +256,20 @@ readme = "README.md"   # → long_description
 ```
 
 O badge de versão aponta direto para a página do projeto na PyPI.
+
+---
+
+## 📜 Changelog
+
+<details open>
+
+### 0.0.2
+- 📋 **File picker no menu** — ao isolar áudio/vídeo/cortar/ver info, o isolar lista os arquivos da pasta atual do terminal com tamanho, e você escolhe pelo número (`m` = digitar caminho manual).
+
+### 0.0.1
+- 🎉 Versão inicial: `isolar audio | video | cut | info`, menu interativo, fast cut com stream copy e barra de progresso.
+
+</details>
 
 ---
 

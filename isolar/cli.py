@@ -20,6 +20,7 @@ from .utils import (
     get_media_info,
     green,
     human_size,
+    list_media,
     red,
     warn,
     yellow,
@@ -120,6 +121,46 @@ def _ask_path(prompt: str = "📁 Caminho do arquivo") -> Path:
         print(red(f"  ✖ Arquivo não encontrado: {raw or '(nada informado)'}"))
 
 
+_PICK_LABELS = {
+    "video": "Vídeos",
+    "audio": "Áudios",
+    "media": "Arquivos de mídia",
+}
+
+
+def _pick_file(kind: str = "video") -> Path:
+    """Lista a mídia da pasta atual e devolve o arquivo escolhido por número.
+
+    ``m`` (ou ``0``) mantém o modo antigo: digitar o caminho manualmente.
+    Sem mídia local, cai direto no pedido de caminho.
+    """
+    files = list_media(Path.cwd(), kind=kind)
+    if not files:
+        warn(f"Nenhum {_PICK_LABELS[kind].lower()} na pasta atual — informe o caminho manualmente.")
+        return _ask_path()
+
+    print(dim(f"  📁 {_PICK_LABELS[kind]} em {Path.cwd()} ({len(files)}):"))
+    for index, path in enumerate(files, start=1):
+        try:
+            size = dim(f" ({human_size(path.stat().st_size)})")
+        except OSError:
+            size = ""
+        print(f"   {index:2d}) {path.name}{size}")
+    print(dim("   ── m = digitar caminho manualmente ──"))
+
+    while True:
+        try:
+            raw = input(cyan("  Escolha o arquivo [1]: ")).strip().lower()
+        except EOFError:
+            raise
+        if raw in ("m", "manual", "0"):
+            return _ask_path()
+        index = 1 if raw == "" else int(raw) if raw.isdigit() else -1
+        if 1 <= index <= len(files):
+            return files[index - 1]
+        warn(f"Escolha entre 1 e {len(files)} — ou 'm' para digitar o caminho.")
+
+
 def _ask_audio_format() -> str:
     keys = list(core.AUDIO_FORMATS)
     print(dim("  Formatos suportados (FFmpeg por baixo dos panos):"))
@@ -159,7 +200,7 @@ def _ask_bitrate(default: str = "192k") -> str:
 # ---------------------------------------------------------------------------
 
 def _flow_audio() -> None:
-    src = _ask_path()
+    src = _pick_file("video")
     info = get_media_info(src)
     if not info["has_audio"]:
         raise IsolarError(f"'{src.name}' não possui faixa de áudio.")
@@ -173,13 +214,13 @@ def _flow_audio() -> None:
 
 
 def _flow_video() -> None:
-    src = _ask_path()
+    src = _pick_file("video")
     out = core.isolate_video(src)
     _print_result(out)
 
 
 def _flow_cut() -> None:
-    src = _ask_path()
+    src = _pick_file("media")
     info = get_media_info(src)
     print(dim(f"  ✦ {core.describe_media(info)}"))
     start = _ask("Início (ex: 10, 1:30, 00:01:30.500)", "0")
@@ -199,7 +240,7 @@ def _flow_cut() -> None:
 
 
 def _flow_info() -> None:
-    _show_info(_ask_path())
+    _show_info(_pick_file("media"))
 
 
 # ---------------------------------------------------------------------------
