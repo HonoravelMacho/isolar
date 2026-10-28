@@ -1,0 +1,2391 @@
+{
+ "nodes": [
+  {
+   "id": "isolar.cli",
+   "label": "cli.py",
+   "file": "isolar/cli.py",
+   "lang": "python",
+   "mod": "isolar",
+   "color": "#22d3ee",
+   "imports": [
+    "__future__",
+    "argparse",
+    "re",
+    "pathlib",
+    "typing",
+    ".__version__",
+    ".core",
+    ".utils"
+   ],
+   "externals": [],
+   "symbols": 21,
+   "defs": [
+    {
+     "n": "_banner",
+     "k": "func",
+     "l": 55,
+     "top": true
+    },
+    {
+     "n": "_print_result",
+     "k": "func",
+     "l": 63,
+     "top": true
+    },
+    {
+     "n": "_show_info",
+     "k": "func",
+     "l": 71,
+     "top": true
+    },
+    {
+     "n": "_ask",
+     "k": "func",
+     "l": 101,
+     "top": true
+    },
+    {
+     "n": "_ask_yes_no",
+     "k": "func",
+     "l": 106,
+     "top": true
+    },
+    {
+     "n": "_ask_path",
+     "k": "func",
+     "l": 114,
+     "top": true
+    },
+    {
+     "n": "_ask_audio_format",
+     "k": "func",
+     "l": 123,
+     "top": true
+    },
+    {
+     "n": "_ask_track",
+     "k": "func",
+     "l": 135,
+     "top": true
+    },
+    {
+     "n": "_ask_bitrate",
+     "k": "func",
+     "l": 146,
+     "top": true
+    },
+    {
+     "n": "_flow_audio",
+     "k": "func",
+     "l": 161,
+     "top": true
+    },
+    {
+     "n": "_flow_video",
+     "k": "func",
+     "l": 175,
+     "top": true
+    },
+    {
+     "n": "_flow_cut",
+     "k": "func",
+     "l": 181,
+     "top": true
+    },
+    {
+     "n": "_flow_info",
+     "k": "func",
+     "l": 201,
+     "top": true
+    },
+    {
+     "n": "_interactive",
+     "k": "func",
+     "l": 209,
+     "top": true
+    },
+    {
+     "n": "_ensure_input",
+     "k": "func",
+     "l": 249,
+     "top": true
+    },
+    {
+     "n": "_run_audio",
+     "k": "func",
+     "l": 255,
+     "top": true
+    },
+    {
+     "n": "_run_video",
+     "k": "func",
+     "l": 268,
+     "top": true
+    },
+    {
+     "n": "_run_cut",
+     "k": "func",
+     "l": 275,
+     "top": true
+    },
+    {
+     "n": "_run_info",
+     "k": "func",
+     "l": 289,
+     "top": true
+    },
+    {
+     "n": "_build_parser",
+     "k": "func",
+     "l": 303,
+     "top": true
+    },
+    {
+     "n": "main",
+     "k": "func",
+     "l": 400,
+     "top": true
+    }
+   ],
+   "caps": [],
+   "loc": 424,
+   "todo_n": 0,
+   "todo_ex": [],
+   "entry": true,
+   "changed": false,
+   "deg": 3,
+   "size": 13.7
+  },
+  {
+   "id": "isolar.core",
+   "label": "core.py",
+   "file": "isolar/core.py",
+   "lang": "python",
+   "mod": "isolar",
+   "color": "#22d3ee",
+   "imports": [
+    "__future__",
+    "pathlib",
+    "typing",
+    ".utils"
+   ],
+   "externals": [],
+   "symbols": 8,
+   "defs": [
+    {
+     "n": "get_info",
+     "k": "func",
+     "l": 64,
+     "top": true
+    },
+    {
+     "n": "describe_media",
+     "k": "func",
+     "l": 69,
+     "top": true
+    },
+    {
+     "n": "_validate_source",
+     "k": "func",
+     "l": 89,
+     "top": true
+    },
+    {
+     "n": "_resolve_target",
+     "k": "func",
+     "l": 98,
+     "top": true
+    },
+    {
+     "n": "isolate_audio",
+     "k": "func",
+     "l": 128,
+     "top": true
+    },
+    {
+     "n": "isolate_video",
+     "k": "func",
+     "l": 193,
+     "top": true
+    },
+    {
+     "n": "cut_media",
+     "k": "func",
+     "l": 217,
+     "top": true
+    },
+    {
+     "n": "_reencode_args",
+     "k": "func",
+     "l": 299,
+     "top": true
+    }
+   ],
+   "caps": [],
+   "loc": 326,
+   "todo_n": 0,
+   "todo_ex": [],
+   "entry": false,
+   "changed": false,
+   "deg": 2,
+   "size": 9.8
+  },
+  {
+   "id": "isolar.utils",
+   "label": "utils.py",
+   "file": "isolar/utils.py",
+   "lang": "python",
+   "mod": "isolar",
+   "color": "#22d3ee",
+   "imports": [
+    "__future__",
+    "json",
+    "os",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "threading",
+    "pathlib",
+    "typing",
+    "tqdm"
+   ],
+   "externals": [],
+   "symbols": 31,
+   "defs": [
+    {
+     "n": "IsolarError",
+     "k": "class",
+     "l": 43,
+     "top": true
+    },
+    {
+     "n": "FFmpegNotFoundError",
+     "k": "class",
+     "l": 47,
+     "top": true
+    },
+    {
+     "n": "FFmpegError",
+     "k": "class",
+     "l": 51,
+     "top": true
+    },
+    {
+     "n": "FFmpegError.__init__",
+     "k": "func",
+     "l": 54,
+     "top": false
+    },
+    {
+     "n": "MediaNotFoundError",
+     "k": "class",
+     "l": 59,
+     "top": true
+    },
+    {
+     "n": "InvalidTimeError",
+     "k": "class",
+     "l": 63,
+     "top": true
+    },
+    {
+     "n": "_supports_color",
+     "k": "func",
+     "l": 71,
+     "top": true
+    },
+    {
+     "n": "_paint",
+     "k": "func",
+     "l": 82,
+     "top": true
+    },
+    {
+     "n": "bold",
+     "k": "func",
+     "l": 86,
+     "top": true
+    },
+    {
+     "n": "red",
+     "k": "func",
+     "l": 90,
+     "top": true
+    },
+    {
+     "n": "green",
+     "k": "func",
+     "l": 94,
+     "top": true
+    },
+    {
+     "n": "yellow",
+     "k": "func",
+     "l": 98,
+     "top": true
+    },
+    {
+     "n": "cyan",
+     "k": "func",
+     "l": 102,
+     "top": true
+    },
+    {
+     "n": "dim",
+     "k": "func",
+     "l": 106,
+     "top": true
+    },
+    {
+     "n": "warn",
+     "k": "func",
+     "l": 110,
+     "top": true
+    },
+    {
+     "n": "success",
+     "k": "func",
+     "l": 114,
+     "top": true
+    },
+    {
+     "n": "_tool",
+     "k": "func",
+     "l": 136,
+     "top": true
+    },
+    {
+     "n": "check_dependencies",
+     "k": "func",
+     "l": 144,
+     "top": true
+    },
+    {
+     "n": "get_media_info",
+     "k": "func",
+     "l": 163,
+     "top": true
+    },
+    {
+     "n": "get_media_info._int",
+     "k": "func",
+     "l": 209,
+     "top": false
+    },
+    {
+     "n": "parse_time",
+     "k": "func",
+     "l": 251,
+     "top": true
+    },
+    {
+     "n": "format_time",
+     "k": "func",
+     "l": 295,
+     "top": true
+    },
+    {
+     "n": "resolve_output_path",
+     "k": "func",
+     "l": 311,
+     "top": true
+    },
+    {
+     "n": "human_size",
+     "k": "func",
+     "l": 324,
+     "top": true
+    },
+    {
+     "n": "_Progress",
+     "k": "class",
+     "l": 340,
+     "top": true
+    },
+    {
+     "n": "_Progress.__init__",
+     "k": "func",
+     "l": 345,
+     "top": false
+    },
+    {
+     "n": "_Progress.update",
+     "k": "func",
+     "l": 368,
+     "top": false
+    },
+    {
+     "n": "_Progress.finish",
+     "k": "func",
+     "l": 386,
+     "top": false
+    },
+    {
+     "n": "_Progress.close",
+     "k": "func",
+     "l": 393,
+     "top": false
+    },
+    {
+     "n": "run_ffmpeg",
+     "k": "func",
+     "l": 406,
+     "top": true
+    },
+    {
+     "n": "run_ffmpeg._drain",
+     "k": "func",
+     "l": 429,
+     "top": false
+    }
+   ],
+   "caps": [],
+   "loc": 494,
+   "todo_n": 0,
+   "todo_ex": [],
+   "entry": false,
+   "changed": false,
+   "deg": 2,
+   "size": 12.8
+  },
+  {
+   "id": "isolar.__main__",
+   "label": "__main__.py",
+   "file": "isolar/__main__.py",
+   "lang": "python",
+   "mod": "isolar",
+   "color": "#22d3ee",
+   "imports": [
+    "sys",
+    ".cli"
+   ],
+   "externals": [],
+   "symbols": 0,
+   "defs": [],
+   "caps": [],
+   "loc": 9,
+   "todo_n": 0,
+   "todo_ex": [],
+   "entry": true,
+   "changed": false,
+   "deg": 1,
+   "size": 6.9
+  },
+  {
+   "id": "deploy",
+   "label": "deploy.py",
+   "file": "deploy.py",
+   "lang": "python",
+   "mod": "root",
+   "color": "#f472b6",
+   "imports": [
+    "__future__",
+    "argparse",
+    "os",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "pathlib",
+    "typing"
+   ],
+   "externals": [],
+   "symbols": 10,
+   "defs": [
+    {
+     "n": "_run",
+     "k": "func",
+     "l": 38,
+     "top": true
+    },
+    {
+     "n": "_load_env_file",
+     "k": "func",
+     "l": 54,
+     "top": true
+    },
+    {
+     "n": "_mask",
+     "k": "func",
+     "l": 69,
+     "top": true
+    },
+    {
+     "n": "read_version",
+     "k": "func",
+     "l": 73,
+     "top": true
+    },
+    {
+     "n": "clean_artifacts",
+     "k": "func",
+     "l": 85,
+     "top": true
+    },
+    {
+     "n": "build",
+     "k": "func",
+     "l": 93,
+     "top": true
+    },
+    {
+     "n": "twine_check",
+     "k": "func",
+     "l": 103,
+     "top": true
+    },
+    {
+     "n": "upload",
+     "k": "func",
+     "l": 113,
+     "top": true
+    },
+    {
+     "n": "push_github",
+     "k": "func",
+     "l": 140,
+     "top": true
+    },
+    {
+     "n": "main",
+     "k": "func",
+     "l": 173,
+     "top": true
+    }
+   ],
+   "caps": [],
+   "loc": 215,
+   "todo_n": 0,
+   "todo_ex": [],
+   "entry": true,
+   "changed": false,
+   "deg": 0,
+   "size": 8.5
+  },
+  {
+   "id": "isolar",
+   "label": "__init__.py",
+   "file": "isolar/__init__.py",
+   "lang": "python",
+   "mod": "isolar",
+   "color": "#22d3ee",
+   "imports": [],
+   "externals": [],
+   "symbols": 0,
+   "defs": [],
+   "caps": [],
+   "loc": 8,
+   "todo_n": 0,
+   "todo_ex": [],
+   "entry": false,
+   "changed": false,
+   "deg": 0,
+   "size": 6.0
+  }
+ ],
+ "links": [
+  [
+   "isolar.__main__",
+   "isolar.cli"
+  ],
+  [
+   "isolar.cli",
+   "isolar.core"
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils"
+  ],
+  [
+   "isolar.core",
+   "isolar.utils"
+  ]
+ ],
+ "call_edges": [
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "cyan",
+   57
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "bold",
+   58
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "dim",
+   58
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "green",
+   66
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "human_size",
+   68
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "get_media_info",
+   72
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "format_time",
+   85
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "red",
+   120
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "warn",
+   131
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "IsolarError",
+   165
+  ],
+  [
+   "isolar.cli",
+   "isolar.core",
+   "isolate_audio",
+   171
+  ],
+  [
+   "isolar.cli",
+   "isolar.core",
+   "isolate_video",
+   177
+  ],
+  [
+   "isolar.cli",
+   "isolar.core",
+   "describe_media",
+   184
+  ],
+  [
+   "isolar.cli",
+   "isolar.core",
+   "cut_media",
+   191
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "yellow",
+   241
+  ],
+  [
+   "isolar.cli",
+   "isolar.utils",
+   "check_dependencies",
+   407
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "get_media_info",
+   66
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "format_time",
+   80
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "human_size",
+   81
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "MediaNotFoundError",
+   94
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "resolve_output_path",
+   105
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "warn",
+   118
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "IsolarError",
+   143
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "run_ffmpeg",
+   163
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "parse_time",
+   241
+  ],
+  [
+   "isolar.core",
+   "isolar.utils",
+   "InvalidTimeError",
+   246
+  ]
+ ],
+ "mods": {
+  "isolar": "#22d3ee",
+  "root": "#f472b6"
+ },
+ "capabilities": {},
+ "manifest_files": [],
+ "risks": {
+  "gods": [],
+  "fan_out": [],
+  "fan_in": [],
+  "cycles": [],
+  "todos": [],
+  "todo_total": 0,
+  "entries": [
+   "isolar/cli.py",
+   "isolar/__main__.py",
+   "deploy.py"
+  ],
+  "orphans": [
+   "isolar/__init__.py"
+  ]
+ },
+ "changed": [],
+ "fs_index": {
+  "deploy.py": {
+   "m": 1793230292,
+   "s": 7548,
+   "lang": "python",
+   "rec": {
+    "id": "deploy",
+    "rel": "deploy.py",
+    "lang": "python",
+    "imports_raw": [
+     "__future__",
+     "argparse",
+     "os",
+     "re",
+     "shutil",
+     "subprocess",
+     "sys",
+     "pathlib",
+     "typing"
+    ],
+    "externals": [],
+    "defs": [
+     {
+      "n": "_run",
+      "k": "func",
+      "l": 38,
+      "top": true
+     },
+     {
+      "n": "_load_env_file",
+      "k": "func",
+      "l": 54,
+      "top": true
+     },
+     {
+      "n": "_mask",
+      "k": "func",
+      "l": 69,
+      "top": true
+     },
+     {
+      "n": "read_version",
+      "k": "func",
+      "l": 73,
+      "top": true
+     },
+     {
+      "n": "clean_artifacts",
+      "k": "func",
+      "l": 85,
+      "top": true
+     },
+     {
+      "n": "build",
+      "k": "func",
+      "l": 93,
+      "top": true
+     },
+     {
+      "n": "twine_check",
+      "k": "func",
+      "l": 103,
+      "top": true
+     },
+     {
+      "n": "upload",
+      "k": "func",
+      "l": 113,
+      "top": true
+     },
+     {
+      "n": "push_github",
+      "k": "func",
+      "l": 140,
+      "top": true
+     },
+     {
+      "n": "main",
+      "k": "func",
+      "l": 173,
+      "top": true
+     }
+    ],
+    "calls": [
+     [
+      "resolve",
+      30,
+      1
+     ],
+     [
+      "Path",
+      30,
+      0
+     ],
+     [
+      "join",
+      45,
+      1
+     ],
+     [
+      "print",
+      47,
+      0
+     ],
+     [
+      "run",
+      48,
+      1
+     ],
+     [
+      "list",
+      48,
+      0
+     ],
+     [
+      "SystemExit",
+      50,
+      0
+     ],
+     [
+      "splitlines",
+      58,
+      1
+     ],
+     [
+      "read_text",
+      58,
+      1
+     ],
+     [
+      "strip",
+      59,
+      1
+     ],
+     [
+      "startswith",
+      60,
+      1
+     ],
+     [
+      "partition",
+      62,
+      1
+     ],
+     [
+      "len",
+      70,
+      0
+     ],
+     [
+      "search",
+      75,
+      1
+     ],
+     [
+      "group",
+      78,
+      1
+     ],
+     [
+      "rmtree",
+      88,
+      1
+     ],
+     [
+      "glob",
+      89,
+      1
+     ],
+     [
+      "_run",
+      95,
+      0
+     ],
+     [
+      "sorted",
+      105,
+      0
+     ],
+     [
+      "str",
+      105,
+      0
+     ],
+     [
+      "is_file",
+      105,
+      1
+     ],
+     [
+      "basename",
+      110,
+      1
+     ],
+     [
+      "copy",
+      119,
+      1
+     ],
+     [
+      "get",
+      122,
+      1
+     ],
+     [
+      "_load_env_file",
+      122,
+      0
+     ],
+     [
+      "_mask",
+      127,
+      0
+     ],
+     [
+      "exists",
+      131,
+      1
+     ],
+     [
+      "ArgumentParser",
+      174,
+      1
+     ],
+     [
+      "add_argument",
+      175,
+      1
+     ],
+     [
+      "parse_args",
+      179,
+      1
+     ],
+     [
+      "read_version",
+      181,
+      0
+     ],
+     [
+      "clean_artifacts",
+      184,
+      0
+     ],
+     [
+      "build",
+      185,
+      0
+     ],
+     [
+      "twine_check",
+      187,
+      0
+     ],
+     [
+      "lower",
+      195,
+      1
+     ],
+     [
+      "input",
+      195,
+      0
+     ],
+     [
+      "upload",
+      202,
+      0
+     ],
+     [
+      "push_github",
+      206,
+      0
+     ],
+     [
+      "main",
+      211,
+      0
+     ],
+     [
+      "exit",
+      214,
+      1
+     ]
+    ],
+    "tops": [
+     "_load_env_file",
+     "_mask",
+     "_run",
+     "build",
+     "clean_artifacts",
+     "main",
+     "push_github",
+     "read_version",
+     "twine_check",
+     "upload"
+    ],
+    "caps": [],
+    "loc": 215,
+    "todos": [],
+    "entry": true,
+    "pkg": ""
+   }
+  },
+  "isolar/__init__.py": {
+   "m": 1793230124,
+   "s": 219,
+   "lang": "python",
+   "rec": {
+    "id": "isolar",
+    "rel": "isolar/__init__.py",
+    "lang": "python",
+    "imports_raw": [],
+    "externals": [],
+    "defs": [],
+    "calls": [],
+    "tops": [],
+    "caps": [],
+    "loc": 8,
+    "todos": [],
+    "entry": false,
+    "pkg": ""
+   }
+  },
+  "isolar/__main__.py": {
+   "m": 1793230124,
+   "s": 140,
+   "lang": "python",
+   "rec": {
+    "id": "isolar.__main__",
+    "rel": "isolar/__main__.py",
+    "lang": "python",
+    "imports_raw": [
+     "sys",
+     ".cli"
+    ],
+    "externals": [],
+    "defs": [],
+    "calls": [
+     [
+      "exit",
+      8,
+      1
+     ],
+     [
+      "main",
+      8,
+      0
+     ]
+    ],
+    "tops": [],
+    "caps": [],
+    "loc": 9,
+    "todos": [],
+    "entry": true,
+    "pkg": ""
+   }
+  },
+  "isolar/cli.py": {
+   "m": 1793230231,
+   "s": 13647,
+   "lang": "python",
+   "rec": {
+    "id": "isolar.cli",
+    "rel": "isolar/cli.py",
+    "lang": "python",
+    "imports_raw": [
+     "__future__",
+     "argparse",
+     "re",
+     "pathlib",
+     "typing",
+     ".__version__",
+     ".core",
+     ".utils"
+    ],
+    "externals": [],
+    "defs": [
+     {
+      "n": "_banner",
+      "k": "func",
+      "l": 55,
+      "top": true
+     },
+     {
+      "n": "_print_result",
+      "k": "func",
+      "l": 63,
+      "top": true
+     },
+     {
+      "n": "_show_info",
+      "k": "func",
+      "l": 71,
+      "top": true
+     },
+     {
+      "n": "_ask",
+      "k": "func",
+      "l": 101,
+      "top": true
+     },
+     {
+      "n": "_ask_yes_no",
+      "k": "func",
+      "l": 106,
+      "top": true
+     },
+     {
+      "n": "_ask_path",
+      "k": "func",
+      "l": 114,
+      "top": true
+     },
+     {
+      "n": "_ask_audio_format",
+      "k": "func",
+      "l": 123,
+      "top": true
+     },
+     {
+      "n": "_ask_track",
+      "k": "func",
+      "l": 135,
+      "top": true
+     },
+     {
+      "n": "_ask_bitrate",
+      "k": "func",
+      "l": 146,
+      "top": true
+     },
+     {
+      "n": "_flow_audio",
+      "k": "func",
+      "l": 161,
+      "top": true
+     },
+     {
+      "n": "_flow_video",
+      "k": "func",
+      "l": 175,
+      "top": true
+     },
+     {
+      "n": "_flow_cut",
+      "k": "func",
+      "l": 181,
+      "top": true
+     },
+     {
+      "n": "_flow_info",
+      "k": "func",
+      "l": 201,
+      "top": true
+     },
+     {
+      "n": "_interactive",
+      "k": "func",
+      "l": 209,
+      "top": true
+     },
+     {
+      "n": "_ensure_input",
+      "k": "func",
+      "l": 249,
+      "top": true
+     },
+     {
+      "n": "_run_audio",
+      "k": "func",
+      "l": 255,
+      "top": true
+     },
+     {
+      "n": "_run_video",
+      "k": "func",
+      "l": 268,
+      "top": true
+     },
+     {
+      "n": "_run_cut",
+      "k": "func",
+      "l": 275,
+      "top": true
+     },
+     {
+      "n": "_run_info",
+      "k": "func",
+      "l": 289,
+      "top": true
+     },
+     {
+      "n": "_build_parser",
+      "k": "func",
+      "l": 303,
+      "top": true
+     },
+     {
+      "n": "main",
+      "k": "func",
+      "l": 400,
+      "top": true
+     }
+    ],
+    "calls": [
+     [
+      "print",
+      56,
+      0
+     ],
+     [
+      "cyan",
+      57,
+      0
+     ],
+     [
+      "bold",
+      58,
+      0
+     ],
+     [
+      "upper",
+      58,
+      1
+     ],
+     [
+      "dim",
+      58,
+      0
+     ],
+     [
+      "exists",
+      64,
+      1
+     ],
+     [
+      "stat",
+      64,
+      1
+     ],
+     [
+      "green",
+      66,
+      0
+     ],
+     [
+      "human_size",
+      68,
+      0
+     ],
+     [
+      "get_media_info",
+      72,
+      0
+     ],
+     [
+      "str",
+      83,
+      0
+     ],
+     [
+      "format_time",
+      85,
+      0
+     ],
+     [
+      "strip",
+      103,
+      1
+     ],
+     [
+      "input",
+      103,
+      0
+     ],
+     [
+      "lower",
+      108,
+      1
+     ],
+     [
+      "_ask",
+      108,
+      0
+     ],
+     [
+      "expanduser",
+      117,
+      1
+     ],
+     [
+      "Path",
+      117,
+      0
+     ],
+     [
+      "is_file",
+      118,
+      1
+     ],
+     [
+      "red",
+      120,
+      0
+     ],
+     [
+      "list",
+      124,
+      0
+     ],
+     [
+      "enumerate",
+      126,
+      0
+     ],
+     [
+      "isdigit",
+      129,
+      1
+     ],
+     [
+      "int",
+      129,
+      0
+     ],
+     [
+      "len",
+      129,
+      0
+     ],
+     [
+      "warn",
+      131,
+      0
+     ],
+     [
+      "match",
+      148,
+      1
+     ],
+     [
+      "_ask_path",
+      162,
+      0
+     ],
+     [
+      "IsolarError",
+      165,
+      0
+     ],
+     [
+      "_ask_track",
+      166,
+      0
+     ],
+     [
+      "_ask_audio_format",
+      167,
+      0
+     ],
+     [
+      "_ask_bitrate",
+      170,
+      0
+     ],
+     [
+      "isolate_audio",
+      171,
+      1
+     ],
+     [
+      "_print_result",
+      172,
+      0
+     ],
+     [
+      "isolate_video",
+      177,
+      1
+     ],
+     [
+      "describe_media",
+      184,
+      1
+     ],
+     [
+      "_ask_yes_no",
+      190,
+      0
+     ],
+     [
+      "cut_media",
+      191,
+      1
+     ],
+     [
+      "_show_info",
+      202,
+      0
+     ],
+     [
+      "_banner",
+      210,
+      0
+     ],
+     [
+      "yellow",
+      241,
+      0
+     ],
+     [
+      "_ensure_input",
+      256,
+      0
+     ],
+     [
+      "ArgumentParser",
+      304,
+      1
+     ],
+     [
+      "add_argument",
+      314,
+      1
+     ],
+     [
+      "add_subparsers",
+      326,
+      1
+     ],
+     [
+      "add_parser",
+      328,
+      1
+     ],
+     [
+      "_build_parser",
+      402,
+      0
+     ],
+     [
+      "parse_args",
+      403,
+      1
+     ],
+     [
+      "get",
+      404,
+      1
+     ],
+     [
+      "check_dependencies",
+      407,
+      0
+     ],
+     [
+      "_interactive",
+      409,
+      0
+     ],
+     [
+      "handler",
+      410,
+      0
+     ]
+    ],
+    "tops": [
+     "_ask",
+     "_ask_audio_format",
+     "_ask_bitrate",
+     "_ask_path",
+     "_ask_track",
+     "_ask_yes_no",
+     "_banner",
+     "_build_parser",
+     "_ensure_input",
+     "_flow_audio",
+     "_flow_cut",
+     "_flow_info",
+     "_flow_video",
+     "_interactive",
+     "_print_result",
+     "_run_audio",
+     "_run_cut",
+     "_run_info",
+     "_run_video",
+     "_show_info",
+     "main"
+    ],
+    "caps": [],
+    "loc": 424,
+    "todos": [],
+    "entry": true,
+    "pkg": ""
+   }
+  },
+  "isolar/core.py": {
+   "m": 1793230191,
+   "s": 12156,
+   "lang": "python",
+   "rec": {
+    "id": "isolar.core",
+    "rel": "isolar/core.py",
+    "lang": "python",
+    "imports_raw": [
+     "__future__",
+     "pathlib",
+     "typing",
+     ".utils"
+    ],
+    "externals": [],
+    "defs": [
+     {
+      "n": "get_info",
+      "k": "func",
+      "l": 64,
+      "top": true
+     },
+     {
+      "n": "describe_media",
+      "k": "func",
+      "l": 69,
+      "top": true
+     },
+     {
+      "n": "_validate_source",
+      "k": "func",
+      "l": 89,
+      "top": true
+     },
+     {
+      "n": "_resolve_target",
+      "k": "func",
+      "l": 98,
+      "top": true
+     },
+     {
+      "n": "isolate_audio",
+      "k": "func",
+      "l": 128,
+      "top": true
+     },
+     {
+      "n": "isolate_video",
+      "k": "func",
+      "l": 193,
+      "top": true
+     },
+     {
+      "n": "cut_media",
+      "k": "func",
+      "l": 217,
+      "top": true
+     },
+     {
+      "n": "_reencode_args",
+      "k": "func",
+      "l": 299,
+      "top": true
+     }
+    ],
+    "calls": [
+     [
+      "get_media_info",
+      66,
+      0
+     ],
+     [
+      "_validate_source",
+      66,
+      0
+     ],
+     [
+      "append",
+      73,
+      1
+     ],
+     [
+      "format_time",
+      80,
+      0
+     ],
+     [
+      "human_size",
+      81,
+      0
+     ],
+     [
+      "join",
+      82,
+      1
+     ],
+     [
+      "strip",
+      91,
+      1
+     ],
+     [
+      "str",
+      91,
+      0
+     ],
+     [
+      "expanduser",
+      92,
+      1
+     ],
+     [
+      "Path",
+      92,
+      0
+     ],
+     [
+      "is_file",
+      93,
+      1
+     ],
+     [
+      "MediaNotFoundError",
+      94,
+      0
+     ],
+     [
+      "resolve_output_path",
+      105,
+      0
+     ],
+     [
+      "cwd",
+      105,
+      1
+     ],
+     [
+      "endswith",
+      110,
+      1
+     ],
+     [
+      "exists",
+      111,
+      1
+     ],
+     [
+      "is_dir",
+      111,
+      1
+     ],
+     [
+      "warn",
+      118,
+      0
+     ],
+     [
+      "mkdir",
+      120,
+      1
+     ],
+     [
+      "lower",
+      141,
+      1
+     ],
+     [
+      "IsolarError",
+      143,
+      0
+     ],
+     [
+      "get",
+      160,
+      1
+     ],
+     [
+      "_resolve_target",
+      162,
+      0
+     ],
+     [
+      "run_ffmpeg",
+      163,
+      0
+     ],
+     [
+      "list",
+      176,
+      0
+     ],
+     [
+      "upper",
+      184,
+      1
+     ],
+     [
+      "lstrip",
+      203,
+      1
+     ],
+     [
+      "parse_time",
+      241,
+      0
+     ],
+     [
+      "InvalidTimeError",
+      246,
+      0
+     ],
+     [
+      "_reencode_args",
+      278,
+      0
+     ]
+    ],
+    "tops": [
+     "_reencode_args",
+     "_resolve_target",
+     "_validate_source",
+     "cut_media",
+     "describe_media",
+     "get_info",
+     "isolate_audio",
+     "isolate_video"
+    ],
+    "caps": [],
+    "loc": 326,
+    "todos": [],
+    "entry": false,
+    "pkg": ""
+   }
+  },
+  "isolar/utils.py": {
+   "m": 1793230162,
+   "s": 15191,
+   "lang": "python",
+   "rec": {
+    "id": "isolar.utils",
+    "rel": "isolar/utils.py",
+    "lang": "python",
+    "imports_raw": [
+     "__future__",
+     "json",
+     "os",
+     "re",
+     "shutil",
+     "subprocess",
+     "sys",
+     "threading",
+     "pathlib",
+     "typing",
+     "tqdm"
+    ],
+    "externals": [],
+    "defs": [
+     {
+      "n": "IsolarError",
+      "k": "class",
+      "l": 43,
+      "top": true
+     },
+     {
+      "n": "FFmpegNotFoundError",
+      "k": "class",
+      "l": 47,
+      "top": true
+     },
+     {
+      "n": "FFmpegError",
+      "k": "class",
+      "l": 51,
+      "top": true
+     },
+     {
+      "n": "FFmpegError.__init__",
+      "k": "func",
+      "l": 54,
+      "top": false
+     },
+     {
+      "n": "MediaNotFoundError",
+      "k": "class",
+      "l": 59,
+      "top": true
+     },
+     {
+      "n": "InvalidTimeError",
+      "k": "class",
+      "l": 63,
+      "top": true
+     },
+     {
+      "n": "_supports_color",
+      "k": "func",
+      "l": 71,
+      "top": true
+     },
+     {
+      "n": "_paint",
+      "k": "func",
+      "l": 82,
+      "top": true
+     },
+     {
+      "n": "bold",
+      "k": "func",
+      "l": 86,
+      "top": true
+     },
+     {
+      "n": "red",
+      "k": "func",
+      "l": 90,
+      "top": true
+     },
+     {
+      "n": "green",
+      "k": "func",
+      "l": 94,
+      "top": true
+     },
+     {
+      "n": "yellow",
+      "k": "func",
+      "l": 98,
+      "top": true
+     },
+     {
+      "n": "cyan",
+      "k": "func",
+      "l": 102,
+      "top": true
+     },
+     {
+      "n": "dim",
+      "k": "func",
+      "l": 106,
+      "top": true
+     },
+     {
+      "n": "warn",
+      "k": "func",
+      "l": 110,
+      "top": true
+     },
+     {
+      "n": "success",
+      "k": "func",
+      "l": 114,
+      "top": true
+     },
+     {
+      "n": "_tool",
+      "k": "func",
+      "l": 136,
+      "top": true
+     },
+     {
+      "n": "check_dependencies",
+      "k": "func",
+      "l": 144,
+      "top": true
+     },
+     {
+      "n": "get_media_info",
+      "k": "func",
+      "l": 163,
+      "top": true
+     },
+     {
+      "n": "get_media_info._int",
+      "k": "func",
+      "l": 209,
+      "top": false
+     },
+     {
+      "n": "parse_time",
+      "k": "func",
+      "l": 251,
+      "top": true
+     },
+     {
+      "n": "format_time",
+      "k": "func",
+      "l": 295,
+      "top": true
+     },
+     {
+      "n": "resolve_output_path",
+      "k": "func",
+      "l": 311,
+      "top": true
+     },
+     {
+      "n": "human_size",
+      "k": "func",
+      "l": 324,
+      "top": true
+     },
+     {
+      "n": "_Progress",
+      "k": "class",
+      "l": 340,
+      "top": true
+     },
+     {
+      "n": "_Progress.__init__",
+      "k": "func",
+      "l": 345,
+      "top": false
+     },
+     {
+      "n": "_Progress.update",
+      "k": "func",
+      "l": 368,
+      "top": false
+     },
+     {
+      "n": "_Progress.finish",
+      "k": "func",
+      "l": 386,
+      "top": false
+     },
+     {
+      "n": "_Progress.close",
+      "k": "func",
+      "l": 393,
+      "top": false
+     },
+     {
+      "n": "run_ffmpeg",
+      "k": "func",
+      "l": 406,
+      "top": true
+     },
+     {
+      "n": "run_ffmpeg._drain",
+      "k": "func",
+      "l": 429,
+      "top": false
+     }
+    ],
+    "calls": [
+     [
+      "__init__",
+      55,
+      1
+     ],
+     [
+      "super",
+      55,
+      0
+     ],
+     [
+      "get",
+      72,
+      1
+     ],
+     [
+      "isatty",
+      76,
+      1
+     ],
+     [
+      "_supports_color",
+      79,
+      0
+     ],
+     [
+      "_paint",
+      87,
+      0
+     ],
+     [
+      "print",
+      111,
+      0
+     ],
+     [
+      "yellow",
+      111,
+      0
+     ],
+     [
+      "green",
+      115,
+      0
+     ],
+     [
+      "which",
+      138,
+      1
+     ],
+     [
+      "FFmpegNotFoundError",
+      140,
+      0
+     ],
+     [
+      "join",
+      154,
+      1
+     ],
+     [
+      "Path",
+      165,
+      0
+     ],
+     [
+      "is_file",
+      166,
+      1
+     ],
+     [
+      "MediaNotFoundError",
+      167,
+      0
+     ],
+     [
+      "_tool",
+      169,
+      0
+     ],
+     [
+      "str",
+      174,
+      0
+     ],
+     [
+      "run",
+      177,
+      1
+     ],
+     [
+      "FFmpegError",
+      179,
+      0
+     ],
+     [
+      "strip",
+      182,
+      1
+     ],
+     [
+      "loads",
+      187,
+      1
+     ],
+     [
+      "next",
+      194,
+      0
+     ],
+     [
+      "float",
+      204,
+      0
+     ],
+     [
+      "int",
+      211,
+      0
+     ],
+     [
+      "bool",
+      217,
+      0
+     ],
+     [
+      "_int",
+      222,
+      0
+     ],
+     [
+      "stat",
+      222,
+      1
+     ],
+     [
+      "isdigit",
+      229,
+      1
+     ],
+     [
+      "len",
+      237,
+      0
+     ],
+     [
+      "sum",
+      238,
+      0
+     ],
+     [
+      "compile",
+      246,
+      1
+     ],
+     [
+      "isinstance",
+      257,
+      0
+     ],
+     [
+      "InvalidTimeError",
+      260,
+      0
+     ],
+     [
+      "replace",
+      263,
+      1
+     ],
+     [
+      "lower",
+      263,
+      1
+     ],
+     [
+      "search",
+      272,
+      1
+     ],
+     [
+      "match",
+      273,
+      1
+     ],
+     [
+      "all",
+      274,
+      0
+     ],
+     [
+      "groups",
+      274,
+      1
+     ],
+     [
+      "split",
+      281,
+      1
+     ],
+     [
+      "any",
+      282,
+      0
+     ],
+     [
+      "round",
+      300,
+      0
+     ],
+     [
+      "divmod",
+      301,
+      0
+     ],
+     [
+      "expanduser",
+      314,
+      1
+     ],
+     [
+      "mkdir",
+      315,
+      1
+     ],
+     [
+      "exists",
+      318,
+      1
+     ],
+     [
+      "tqdm",
+      354,
+      0
+     ],
+     [
+      "min",
+      369,
+      0
+     ],
+     [
+      "update",
+      373,
+      1
+     ],
+     [
+      "write",
+      381,
+      1
+     ],
+     [
+      "flush",
+      384,
+      1
+     ],
+     [
+      "close",
+      388,
+      1
+     ],
+     [
+      "append",
+      432,
+      1
+     ],
+     [
+      "Popen",
+      437,
+      1
+     ],
+     [
+      "Thread",
+      448,
+      1
+     ],
+     [
+      "start",
+      449,
+      1
+     ],
+     [
+      "_Progress",
+      450,
+      0
+     ],
+     [
+      "partition",
+      457,
+      1
+     ],
+     [
+      "finish",
+      476,
+      1
+     ],
+     [
+      "wait",
+      478,
+      1
+     ],
+     [
+      "kill",
+      480,
+      1
+     ],
+     [
+      "splitlines",
+      492,
+      1
+     ]
+    ],
+    "tops": [
+     "FFmpegError",
+     "FFmpegNotFoundError",
+     "InvalidTimeError",
+     "IsolarError",
+     "MediaNotFoundError",
+     "_Progress",
+     "_paint",
+     "_supports_color",
+     "_tool",
+     "bold",
+     "check_dependencies",
+     "cyan",
+     "dim",
+     "format_time",
+     "get_media_info",
+     "green",
+     "human_size",
+     "parse_time",
+     "red",
+     "resolve_output_path",
+     "run_ffmpeg",
+     "success",
+     "warn",
+     "yellow"
+    ],
+    "caps": [],
+    "loc": 494,
+    "todos": [],
+    "entry": false,
+    "pkg": ""
+   }
+  }
+ },
+ "meta": {
+  "root": "/home/tiagorabelo/isolar",
+  "files": 6,
+  "edges": 4,
+  "call_edges": 26,
+  "files_reused": 0,
+  "git_changed": 0,
+  "langs": [
+   "python"
+  ],
+  "supported": ".py, .c, .h, .cpp, .hpp, .cc, .cxx, .dart, .rs, .js, .jsx, .ts, .tsx, .java, .go, .cs, .kt",
+  "fallback": false,
+  "generic_truncated": false,
+  "generated_in_s": 0.27,
+  "full_rescan": true,
+  "out": "/home/tiagorabelo/isolar/.astos",
+  "scanned_at": "2026-10-28T23:33:46+00:00"
+ }
+}

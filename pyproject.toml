@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "isolar"
+dynamic = ["version"]
+description = "Isole áudio e vídeo na velocidade da luz: extração de áudio, remoção de faixa de som e cortes ultrarrápidos (stream copy) via FFmpeg."
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "HonoravelMacho" },
+]
+keywords = [
+    "ffmpeg", "audio", "video", "cli", "media", "cut", "trim",
+    "extract", "isolar", "fast-cut", "stream-copy",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: Portuguese (Brazilian)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "tqdm>=4.60",
+]
+
+[project.urls]
+Homepage = "https://github.com/HonoravelMacho/isolar"
+Repository = "https://github.com/HonoravelMacho/isolar"
+Issues = "https://github.com/HonoravelMacho/isolar/issues"
+
+[project.scripts]
+isolar = "isolar.cli:main"
+
+[tool.setuptools]
+packages = ["isolar"]
+
+[tool.setuptools.dynamic]
+version = { attr = "isolar.__version__" }
