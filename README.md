@@ -8,10 +8,10 @@
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
 [![FFmpeg](https://img.shields.io/badge/FFmpeg-requerido-informational)](https://ffmpeg.org/)
 
-**Isole áudio e vídeo na velocidade da luz — sem recodificar, sem fricção, sem enrolação.**
+**Isole e converta áudio, vídeo e imagens na velocidade da luz — sem fricção, sem enrolação.**
 
 `isolar` é uma CLI interativa que usa o FFmpeg por baixo dos panos para extrair áudio,
-remover faixas de som e cortar mídias em milissegundos.
+remover faixas de som, cortar e converter mídias em milissegundos.
 
 [Instalação](#-instalação) · [Uso](#-uso) · [Flags](#-flags-disponíveis) · [Como funciona](#-como-funciona-por-dentro) · [FAQ](#-faq)
 
@@ -23,6 +23,7 @@ remover faixas de som e cortar mídias em milissegundos.
 
 - 🎵 **Isolar áudio** — extrai a faixa de áudio de qualquer vídeo (MP3, M4A, AAC, WAV, FLAC, OGG, OPUS, WMA, AIFF...).
 - 🎬 **Isolar vídeo** — remove o som do vídeo, gerando um arquivo mudo.
+- 🔄 **Converter** — vídeo ⇄ áudio ⇄ imagem em qualquer formato que o FFmpeg engolir: MP4, MKV, WebM, AVI, WMV, MPG, GIF animado com paleta otimizada, MP3, FLAC, JPG, PNG, WebP...
 - ✂️ **Fast Cut** — corta/apara mídia com **cópia direta de stream** (`-c copy`): **_ultrarrápido_** e **sem perda de qualidade**.
 - 🖥️ **Dois modos de uso** — menu interativo numérico no terminal **ou** flags diretas para automação/scripting.
 - 📋 **File picker integrado** — o menu lista os arquivos de mídia da pasta atual do terminal: para isolar, é só digitar o número do arquivo (tecla `m` = caminho manual).
@@ -70,19 +71,20 @@ isolar
 ```
 
 ```
-╔════════════════════════════════════════════════╗
-║ 🎧 ISOLAR v0.0.1                               ║
-║ isole áudio e vídeo na velocidade da luz ✨    ║
-╚════════════════════════════════════════════════╝
+  ╔════════════════════════════════════════════════
+  ║ 🎧 ISOLAR v0.0.3
+  ║ isole e converta áudio, vídeo e imagens ✨
+  ╚════════════════════════════════════════════════
 
-O que você quer isolar hoje?
-  1) 🎵 Isolar áudio   extrai o áudio de um vídeo
-  2) 🎬 Isolar vídeo   gera um vídeo sem som
-  3) ✂  Cortar/aparar  corte ultrarrápido (stream copy)
-  4) ℹ  Info da mídia  duração, codecs, tamanho...
-  0) ✖ Sair
+  O que você quer isolar hoje?
+   1) 🎵 Isolar áudio    extrai o áudio de um vídeo
+   2) 🎬 Isolar vídeo    gera um vídeo sem som
+   3) 🔄 Converter       vídeo, áudio e imagem em outro formato
+   4) ✂  Cortar/aparar   corte ultrarrápido (stream copy)
+   5) ℹ  Info da mídia   duração, codecs, tamanho...
+   0) ✖ Sair
 
-Escolha uma opção [0-4]:
+  Escolha uma opção [0-5]:
 ```
 
 Exemplo de sessão:
@@ -119,6 +121,23 @@ isolar audio video.mp4 -t 1             # → usa a 2ª faixa de áudio
 ```bash
 isolar video clip.mkv                   # → clip_mudo.mkv, sem faixa de som
 ```
+
+### 🔄 Converter formatos (`isolar convert`)
+
+O tipo do arquivo é detectado automaticamente (vídeo, áudio ou imagem) e a lista de
+formatos mostra só o que faz sentido — qualquer combinação que o FFmpeg dominar:
+
+```bash
+isolar convert baita.webm -f mp4          # webm → mp4 (H.264 + AAC)
+isolar convert video.mkv -f gif           # vídeo → GIF animado com paleta otimizada
+isolar convert show.mkv -f copy           # troca o container sem recodificar (zero perda)
+isolar convert som.flac -f mp3 -b 320k    # áudio → MP3
+isolar convert foto.png -f webp           # imagem → WebP
+```
+
+> 💡 Qualidade do vídeo: `-q alta | media | compacta` — o isolar mapeia para o
+> parâmetro certo de cada encoder (CRF no H.264/VP9, qscale no Xvid, bitrate no
+> WMV/MPEG-2). Sem `-f`, o menu de formatos aparece com o catálogo do tipo detectado.
 
 ### ✂️ Cortar / aparar (`isolar cut`)
 
@@ -157,6 +176,11 @@ isolar info video.mp4
 | ├── `-t, --track` | Índice da faixa de áudio (começa em 0) | `isolar audio v.mp4 -t 1` |
 | ├── `-o, --output` | Arquivo/pasta de saída (padrão: `cwd`) | `isolar audio v.mp4 -o ~/Musica` |
 | `isolar video <arquivo>` | Gera vídeo mudo (sem faixa de áudio) | `isolar video clip.mkv` |
+| `isolar convert <arquivo>` | **Converte** vídeo, áudio ou imagem | `isolar convert v.webm -f mp4` |
+| ├── `-f, --format` | Formato de saída (menu aparece se omitido) | `isolar convert foto.png -f webp` |
+| ├── `-q, --quality` | Qualidade do vídeo: `alta` `media` `compacta` | `isolar convert v.mkv -f mp4 -q alta` |
+| ├── `-b, --bitrate` | Bitrate de áudio (padrão `192k`) | `isolar convert som.flac -f mp3 -b 320k` |
+| ├── `-o, --output` | Arquivo/pasta de saída (padrão: `cwd`) | `isolar convert v.webm -f mp4 -o ~/Videos` |
 | `isolar cut <arquivo>` | Corte/aparar via **stream copy** | `isolar cut v.mp4 -s 5 -d 10` |
 | ├── `-s, --start` | Ponto de início | `-s 90` · `-s 1:30` · `-s 00:01:30.500` · `-s 1m30s` |
 | ├── `-e, --end` | Ponto de fim | `-e 00:03:00` |
@@ -193,6 +217,28 @@ Tudo que o FFmpeg sabe embalar:
 
 ---
 
+## 🔄 Formatos de conversão (`isolar convert`)
+
+O isolar detecta o tipo do arquivo e oferece só o que faz sentido:
+
+| Origem | Formatos de destino |
+|---|---|
+| **Vídeo** | `mp4` (H.264+AAC) · `mkv` (Matroska) · `mov` (QuickTime) · `webm` (VP9+Opus) · `avi` (Xvid+MP3) · `wmv` · `mpg` (MPEG-2) · `flv` · `gif` (animado com paleta otimizada) · `copy` (remux sem recodificar) |
+| **Áudio** | mesmo catálogo da extração: `mp3` `m4a` `aac` `wav` `flac` `ogg` `opus` `wma` `aiff` `copy` |
+| **Imagem** | `jpg` · `png` (com transparência) · `webp` · `bmp` · `tiff` · `gif` (estático) |
+
+Detalhes por baixo dos panos:
+
+- **GIF animado** — dois passes no mesmo comando (`palettegen`/`paletteuse`): paleta
+  global calculada sobre o vídeo, 12 fps e largura limitada a 480 px. Muito melhor
+  que o GIF progressivo do próprio FFmpeg.
+- **Remux (`-f copy`)** — cópia integral dos streams para o **MKV**, que aceita
+  praticamente qualquer combinação de codecs, incluindo legendas. Velocidade da luz.
+- **MP4/MOV/FLV** — saída já sai com `+faststart` (carrega logo ao dar play na web).
+- Saída padronizada: `<nome>_convertido.<formato>`, sem sobrescrever nada.
+
+---
+
 ## 🧠 Como funciona (por dentro)
 
 ### Corte *fast cut* com stream copy
@@ -219,6 +265,7 @@ Todos os produto do `isolar` são salvos na **pasta de trabalho atual**:
 | Extração de áudio | `<nome>_audio.<formato>` |
 | Vídeo sem som | `<nome>_mudo.<container>` |
 | Corte/aparado | `<nome>_corte.<container>` |
+| Conversão | `<nome>_convertido.<formato>` |
 
 Se o arquivo de destino já existir, o `isolar` **não sobrescreve**: salva como
 `<nome> (1).<ext>`, ` (2)`, ...
@@ -262,6 +309,11 @@ O badge de versão aponta direto para a página do projeto na PyPI.
 ## 📜 Changelog
 
 <details open>
+
+### 0.0.3
+- 🔄 **Conversão de formatos (`isolar convert`)** — vídeo ⇄ áudio ⇄ imagem com todo o poder do FFmpeg: `webm↔mp4`, GIF animado com paleta otimizada de dois passes, remux sem recodificação (`-f copy`), JPG/PNG/WebP/TIFF...
+- 🖼️ O file picker do menu agora lista também **imagens**, e a conversão detecta o tipo do arquivo sozinha (vídeo, áudio ou imagem) para oferecer o catálogo certo.
+- 🚦 Qualidade de vídeo mapeada por encoder (`-q alta|media|compacta`): CRF no H.264/VP9, qscale no Xvid, bitrate no WMV/MPEG-2.
 
 ### 0.0.2
 - 📋 **File picker no menu** — ao isolar áudio/vídeo/cortar/ver info, o isolar lista os arquivos da pasta atual do terminal com tamanho, e você escolhe pelo número (`m` = digitar caminho manual).

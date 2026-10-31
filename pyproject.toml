@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "isolar"
 dynamic = ["version"]
-description = "Isole áudio e vídeo na velocidade da luz: extração de áudio, remoção de faixa de som e cortes ultrarrápidos (stream copy) via FFmpeg."
+description = "Isole e converta mídia na velocidade da luz: extração de áudio, remoção de som, cortes ultrarrápidos e conversão de vídeo, áudio e imagem via FFmpeg."
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"
@@ -16,6 +16,7 @@ authors = [
 keywords = [
     "ffmpeg", "audio", "video", "cli", "media", "cut", "trim",
     "extract", "isolar", "fast-cut", "stream-copy",
+    "convert", "converter", "webm", "mp4", "gif", "image", "jpg", "png", "webp",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

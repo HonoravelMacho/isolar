@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import re
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Sequence, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 from . import __version__, core
 from .utils import (
@@ -34,6 +34,11 @@ USAGE_EXAMPLES = """exemplos:
   isolar audio video.mp4 -f flac           extrai o áudio sem perdas (FLAC)
   isolar audio aula.mp4 -f copy            cópia direta da faixa (sem recodificar)
   isolar video video.mp4                   gera video_mudo.mp4 (sem som)
+  isolar convert baita.webm -f mp4         converte webm → mp4
+  isolar convert video.mkv -f gif          vídeo → GIF animado otimizado
+  isolar convert show.mkv -f copy          troca de container sem recodificar
+  isolar convert som.flac -f mp3           áudio → MP3
+  isolar convert foto.png -f webp          imagem → WebP
   isolar cut video.mp4 -s 10 -d 45         recorta 45s a partir do segundo 10
   isolar cut video.mp4 -s 00:01:30 -e 00:03:00
   isolar cut musica.wav -s 30 -e 60 --reencode   corte exato (recodifica)
@@ -44,8 +49,9 @@ USAGE_EXAMPLES = """exemplos:
 _MENU_ITEMS = [
     ("1", "🎵", "Isolar áudio", "extrai o áudio de um vídeo"),
     ("2", "🎬", "Isolar vídeo", "gera um vídeo sem som"),
-    ("3", "✂ ", "Cortar/aparar", "corte ultrarrápido (stream copy)"),
-    ("4", "ℹ ", "Info da mídia", "duração, codecs, tamanho..."),
+    ("3", "🔄", "Converter", "vídeo, áudio e imagem em outro formato"),
+    ("4", "✂ ", "Cortar/aparar", "corte ultrarrápido (stream copy)"),
+    ("5", "ℹ ", "Info da mídia", "duração, codecs, tamanho..."),
 ]
 
 
@@ -57,7 +63,7 @@ def _banner() -> None:
     print()
     print(cyan("  ╔" + "═" * 48))
     print(cyan("  ║ ") + bold(f"🎧 {PROG.upper()}") + dim(f" v{__version__}"))
-    print(cyan("  ║ ") + dim("isole áudio e vídeo na velocidade da luz ✨"))
+    print(cyan("  ║ ") + dim("isole e converta áudio, vídeo e imagens ✨"))
     print(cyan("  ╚" + "═" * 48))
 
 
@@ -125,6 +131,17 @@ _PICK_LABELS = {
     "video": "Vídeos",
     "audio": "Áudios",
     "media": "Arquivos de mídia",
+    "image": "Imagens",
+    "all": "Mídias e imagens",
+}
+
+# Singular para frases como "Nenhum(a) N na pasta atual".
+_PICK_SINGULAR = {
+    "video": "vídeo",
+    "audio": "áudio",
+    "media": "arquivo de mídia",
+    "image": "imagem",
+    "all": "arquivo de mídia ou imagem",
 }
 
 
@@ -136,7 +153,7 @@ def _pick_file(kind: str = "video") -> Path:
     """
     files = list_media(Path.cwd(), kind=kind)
     if not files:
-        warn(f"Nenhum {_PICK_LABELS[kind].lower()} na pasta atual — informe o caminho manualmente.")
+        warn(f"Nenhum {_PICK_SINGULAR[kind]} na pasta atual — informe o caminho manualmente.")
         return _ask_path()
 
     print(dim(f"  📁 {_PICK_LABELS[kind]} em {Path.cwd()} ({len(files)}):"))
@@ -195,6 +212,57 @@ def _ask_bitrate(default: str = "192k") -> str:
     return default
 
 
+def _ask_convert_format(kind: str) -> str:
+    """Lista os formatos válidos para o tipo do arquivo e coleta a escolha."""
+    catalogs: Dict[str, Dict[str, Dict[str, Any]]] = {
+        "video": core.VIDEO_FORMATS,
+        "audio": core.AUDIO_FORMATS,
+        "image": core.IMAGE_FORMATS,
+    }
+    nouns = {"video": "vídeo", "audio": "áudio", "image": "imagem"}
+    catalog = catalogs[kind]
+    keys = list(catalog)
+    print(dim(f"  Formatos para {nouns[kind]} (todo o poder do FFmpeg):"))
+    for index, key in enumerate(keys, start=1):
+        print(f"   {index:2d}) {key:<6} — {catalog[key]['label']}")
+    raw = _ask("Formato", "1")
+    if raw.isdigit() and 1 <= int(raw) <= len(keys):
+        return keys[int(raw) - 1]
+    warn(f"Opção inválida — usando {keys[0]}.")
+    return keys[0]
+
+
+def _ask_video_quality(default: str = "2") -> str:
+    print(dim("  Qualidade da recodificação:"))
+    print("    1) alta     — melhor imagem, arquivo maior")
+    print("    2) média    — equilíbrio (padrão)")
+    print("    3) compacta — arquivo menor")
+    raw = _ask("Qualidade", default)
+    return {"1": "alta", "2": "media", "3": "compacta"}.get(raw, "media")
+
+
+_KIND_ICONS = {
+    "video": "🎬 vídeo",
+    "audio": "🎵 áudio",
+    "image": "🖼️ imagem",
+}
+
+
+def _convert_summary(info: Dict[str, Any]) -> str:
+    """Resumo do arquivo detectado no fluxo de conversão."""
+    bits: List[str] = []
+    if info["has_video"]:
+        bits.append(str(info["video_codec"]))
+        if info["width"] and info["height"]:
+            bits.append(f"{info['width']}x{info['height']}")
+    if info["has_audio"]:
+        bits.append(f"áudio {info['audio_codec']}")
+    if info["duration"]:
+        bits.append(f"duração {format_time(info['duration'])}")
+    bits.append(human_size(info["size"]))
+    return " · ".join(bits)
+
+
 # ---------------------------------------------------------------------------
 # Fluxos do menu interativo
 # ---------------------------------------------------------------------------
@@ -216,6 +284,24 @@ def _flow_audio() -> None:
 def _flow_video() -> None:
     src = _pick_file("video")
     out = core.isolate_video(src)
+    _print_result(out)
+
+
+def _flow_convert() -> None:
+    src = _pick_file("all")
+    info = get_media_info(src)
+    kind = core.detect_media_kind(src, info)
+    print(dim(f"  ✦ {_KIND_ICONS[kind]} detectado · {_convert_summary(info)}"))
+    fmt = _ask_convert_format(kind)
+
+    quality = "media"
+    bitrate = "192k"
+    if kind == "video" and fmt not in ("copy", "gif"):
+        quality = _ask_video_quality()
+    elif kind == "audio" and core.AUDIO_FORMATS[fmt]["bitrate"]:
+        bitrate = _ask_bitrate()
+
+    out = core.convert_media(src, fmt=fmt, quality=quality, bitrate=bitrate)
     _print_result(out)
 
 
@@ -252,8 +338,9 @@ def _interactive() -> int:
     flows: Dict[str, Callable[[], None]] = {
         "1": _flow_audio,
         "2": _flow_video,
-        "3": _flow_cut,
-        "4": _flow_info,
+        "3": _flow_convert,
+        "4": _flow_cut,
+        "5": _flow_info,
     }
     while True:
         print()
@@ -262,7 +349,7 @@ def _interactive() -> int:
             print(f"   {key}) {icon} {title:<15} {dim(hint)}")
         print("   0) ✖ Sair")
         try:
-            choice = input(cyan("\n  Escolha uma opção [0-4]: ")).strip().lower()
+            choice = input(cyan("\n  Escolha uma opção [0-5]: ")).strip().lower()
         except EOFError:
             print()
             return 0
@@ -313,6 +400,21 @@ def _run_video(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_convert(args: argparse.Namespace) -> int:
+    src = Path(str(_ensure_input(args.input, "📁 Arquivo para converter (vídeo, áudio ou imagem)")))
+    kind = core.detect_media_kind(src)
+    fmt = args.format or _ask_convert_format(kind)
+    out = core.convert_media(
+        src,
+        fmt=fmt,
+        quality=args.quality,
+        bitrate=args.bitrate,
+        output=args.output,
+    )
+    _print_result(out)
+    return 0
+
+
 def _run_cut(args: argparse.Namespace) -> int:
     src = _ensure_input(args.input, "📁 Arquivo para cortar")
     out = core.cut_media(
@@ -336,6 +438,7 @@ def _run_info(args: argparse.Namespace) -> int:
 _HANDLERS: Dict[str, Callable[[argparse.Namespace], int]] = {
     "audio": _run_audio,
     "video": _run_video,
+    "convert": _run_convert,
     "cut": _run_cut,
     "info": _run_info,
 }
@@ -345,9 +448,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog=PROG,
         description=(
-            "isolar — isole áudio e vídeo na velocidade da luz.\n"
-            "Extração de áudio, remoção de faixa de som e cortes ultrarrápidos "
-            "(cópia direta de stream) com FFmpeg por baixo dos panos."
+            "isolar — isole e converta mídia na velocidade da luz.\n"
+            "Extração de áudio, remoção de faixa de som, cortes ultrarrápidos "
+            "(cópia direta de stream) e conversão entre formatos de vídeo, "
+            "áudio e imagem com FFmpeg por baixo dos panos."
         ),
         epilog=USAGE_EXAMPLES,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -423,6 +527,41 @@ def _build_parser() -> argparse.ArgumentParser:
         help="recodifica para um corte exato ao frame (mais lento)",
     )
     p_cut.add_argument(
+        "-o", "--output",
+        help="arquivo ou pasta de saída (padrão: pasta de trabalho atual)",
+    )
+
+    p_convert = sub.add_parser(
+        "convert",
+        help="converte entre formatos: mp4/mkv/webm/avi/gif, mp3/flac, jpg/png/webp...",
+        epilog=USAGE_EXAMPLES,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    p_convert.add_argument(
+        "input", nargs="?",
+        help="arquivo de entrada (vídeo, áudio ou imagem — tipo detectado sozinho)",
+    )
+    p_convert.add_argument(
+        "-f", "--format",
+        help=(
+            "formato de saída; vídeo: mp4 mkv mov webm avi wmv mpg flv gif copy · "
+            "áudio: mp3 m4a aac wav flac ogg opus wma aiff copy · "
+            "imagem: jpg png webp bmp tiff gif "
+            "(sem -f, o menu de formatos aparece)"
+        ),
+    )
+    p_convert.add_argument(
+        "-q", "--quality",
+        choices=("alta", "media", "compacta"),
+        default="media",
+        help="qualidade da recodificação de vídeo (padrão: media)",
+    )
+    p_convert.add_argument(
+        "-b", "--bitrate",
+        default="192k",
+        help="bitrate de áudio nas conversões com perdas (padrão: 192k)",
+    )
+    p_convert.add_argument(
         "-o", "--output",
         help="arquivo ou pasta de saída (padrão: pasta de trabalho atual)",
     )

@@ -10,6 +10,7 @@ from .utils import (
     IsolarError,
     InvalidTimeError,
     MediaNotFoundError,
+    detect_media_kind,
     format_time,
     get_media_info,
     human_size,
@@ -21,9 +22,13 @@ from .utils import (
 
 __all__ = [
     "AUDIO_FORMATS",
+    "VIDEO_FORMATS",
+    "IMAGE_FORMATS",
     "isolate_audio",
     "isolate_video",
     "cut_media",
+    "convert_media",
+    "detect_media_kind",
     "describe_media",
     "get_info",
 ]
@@ -59,6 +64,140 @@ _COPY_CONTAINERS: Dict[str, str] = {
     "pcm_f32le": "wav",
     "wmav2": "wma",
 }
+
+# ---------------------------------------------------------------------------
+# Catálogos do conversor (o arsenal completo do FFmpeg, curado)
+# ---------------------------------------------------------------------------
+
+# Vídeo → vídeo. ``quality`` mapeia a mesma sensação (alta/média/compacta)
+# para o parâmetro certo de cada encoder (CRF, qscale ou bitrate).
+VIDEO_FORMATS: Dict[str, Dict[str, Any]] = {
+    "mp4": {
+        "ext": "mp4", "video": ["libx264", "-preset", "veryfast"],
+        "qflag": "-crf", "quality": {"alta": "18", "media": "22", "compacta": "28"},
+        "pixfmt": "yuv420p", "mux": ["-movflags", "+faststart"],
+        "audio": ["aac", "-b:a", "192k"],
+        "label": "MP4 (H.264 + AAC) — máxima compatibilidade",
+    },
+    "mkv": {
+        "ext": "mkv", "video": ["libx264", "-preset", "veryfast"],
+        "qflag": "-crf", "quality": {"alta": "18", "media": "22", "compacta": "28"},
+        "audio": ["aac", "-b:a", "192k"],
+        "label": "MKV (Matroska) — formato livre, aceita de tudo",
+    },
+    "mov": {
+        "ext": "mov", "video": ["libx264", "-preset", "veryfast"],
+        "qflag": "-crf", "quality": {"alta": "18", "media": "22", "compacta": "28"},
+        "pixfmt": "yuv420p", "mux": ["-movflags", "+faststart"],
+        "audio": ["aac", "-b:a", "192k"],
+        "label": "MOV (QuickTime) — Apple e editores de vídeo",
+    },
+    "webm": {
+        "ext": "webm", "video": ["libvpx-vp9"],
+        "qflag": "-crf", "qextra": ["-b:v", "0"],
+        "quality": {"alta": "25", "media": "33", "compacta": "40"},
+        "speed": ["-cpu-used", "4", "-row-mt", "1"],
+        "audio": ["libopus", "-b:a", "160k"],
+        "label": "WebM (VP9 + Opus) — aberto e leve para a web",
+    },
+    "avi": {
+        "ext": "avi", "video": ["mpeg4", "-vtag", "xvid"],
+        "qflag": "-q:v", "quality": {"alta": "3", "media": "5", "compacta": "8"},
+        "audio": ["libmp3lame", "-b:a", "192k"],
+        "label": "AVI (Xvid + MP3) — legado que toca em tudo",
+    },
+    "wmv": {
+        "ext": "wmv", "video": ["wmv2"],
+        "qflag": "-b:v", "quality": {"alta": "3000k", "media": "1500k", "compacta": "800k"},
+        "audio": ["wmav2", "-b:a", "128k"],
+        "label": "WMV — Windows Media Player",
+    },
+    "mpg": {
+        "ext": "mpg", "video": ["mpeg2video"], "pixfmt": "yuv420p",
+        "qflag": "-b:v", "quality": {"alta": "6000k", "media": "4000k", "compacta": "2000k"},
+        "audio": ["mp2", "-b:a", "192k"],
+        "label": "MPG (MPEG-2) — DVDs e TV antiga",
+    },
+    "flv": {
+        "ext": "flv", "video": ["libx264", "-preset", "veryfast"],
+        "qflag": "-crf", "quality": {"alta": "19", "media": "23", "compacta": "28"},
+        "pixfmt": "yuv420p", "mux": ["-movflags", "+faststart"],
+        "audio": ["aac", "-b:a", "128k"],
+        "label": "FLV — streaming legado (Flash)",
+    },
+    "gif": {
+        "ext": "gif",
+        "label": "GIF animado — paleta otimizada (12 fps, até 480 px)",
+    },
+    "copy": {
+        "ext": "mkv",
+        "label": "troca de container sem recodificar (MKV aceita quase tudo)",
+    },
+}
+
+# Imagem → imagem. ``video`` aqui são os codecs de imagem + ajustes fixos.
+IMAGE_FORMATS: Dict[str, Dict[str, Any]] = {
+    "jpg": {
+        "ext": "jpg", "video": ["mjpeg", "-q:v", "3"],
+        "label": "JPG/JPEG — fotos comprimidas (boa qualidade)",
+    },
+    "png": {
+        "ext": "png", "video": ["png"],
+        "label": "PNG — sem perdas, mantém transparência",
+    },
+    "webp": {
+        "ext": "webp", "video": ["libwebp", "-quality", "85"],
+        "label": "WebP — web moderno, arquivo pequeno",
+    },
+    "bmp": {
+        "ext": "bmp", "video": ["bmp"],
+        "label": "BMP — bitmap cru (Windows)",
+    },
+    "tiff": {
+        "ext": "tiff", "video": ["tiff"],
+        "label": "TIFF — profissional sem perdas",
+    },
+    "gif": {
+        "ext": "gif", "video": ["gif"],
+        "label": "GIF — imagem estática (1 frame)",
+    },
+}
+
+# Mesma sensação de qualidade, nomes alternativos aceitos.
+_QUALITY_ALIASES: Dict[str, str] = {
+    "alta": "alta", "high": "alta",
+    "media": "media", "média": "media",
+    "medio": "media", "médio": "media", "medium": "media",
+    "compacta": "compacta", "compacto": "compacta", "baixa": "compacta", "low": "compacta",
+}
+
+
+def _normalize_quality(quality: str) -> str:
+    """Normaliza o pedido de qualidade (alta/média/compacta) para a chave interna."""
+    return _QUALITY_ALIASES.get(str(quality or "media").lower().strip(), "media")
+
+
+def _convert_target_error(fmt: str, kind: str) -> IsolarError:
+    """Erro amigável quando o formato pedido não combina com o tipo de arquivo."""
+    if kind == "video" and fmt in AUDIO_FORMATS:
+        return IsolarError(
+            f"'{fmt}' é um formato de áudio — para extrair o áudio de um vídeo, "
+            f"use 'isolar audio <arquivo> -f {fmt}'."
+        )
+    if kind == "audio" and (fmt in VIDEO_FORMATS or fmt in IMAGE_FORMATS):
+        return IsolarError(
+            f"Áudios não viram {'vídeos' if fmt in VIDEO_FORMATS else 'imagens'}. "
+            "Opções para áudio: " + ", ".join(AUDIO_FORMATS) + "."
+        )
+    if kind == "image":
+        return IsolarError(
+            f"Formato de imagem desconhecido: '{fmt}'. Opções: "
+            + ", ".join(IMAGE_FORMATS) + "."
+        )
+    return IsolarError(
+        f"Formato desconhecido: '{fmt}'. Opções para vídeo: "
+        + ", ".join(VIDEO_FORMATS) + "."
+    )
 
 
 def get_info(input_path: Union[str, Path]) -> Dict[str, Any]:
@@ -323,3 +462,150 @@ def _reencode_args(ext: str, info: Dict[str, Any]) -> List[str]:
     else:
         audio = ["-an"]
     return [*video, *audio]
+
+
+# ---------------------------------------------------------------------------
+# 4) Conversão de formatos (vídeo, áudio e imagem)
+# ---------------------------------------------------------------------------
+
+def convert_media(
+    input_path: Union[str, Path],
+    fmt: Optional[str] = None,
+    quality: str = "media",
+    bitrate: str = "192k",
+    output: Optional[Union[str, Path]] = None,
+) -> Path:
+    """Converte a mídia entre formatos, detectando o tipo automaticamente.
+
+    ``kind`` (vídeo, áudio ou imagem) sai do ``detect_media_kind`` e o
+    ``fmt`` é validado contra o catálogo correspondente (``VIDEO_FORMATS``,
+    ``AUDIO_FORMATS`` ou ``IMAGE_FORMATS``). Em vídeos, ``fmt="copy"`` só
+    troca o container (remux MKV) sem recodificar nada; ``fmt="gif"``
+    gera GIF animado com paleta otimizada.
+    """
+    src = _validate_source(input_path)
+    info = get_media_info(src)
+    kind = detect_media_kind(src, info)
+
+    if kind == "image":
+        catalog, escopo = IMAGE_FORMATS, "imagem"
+    elif kind == "audio":
+        catalog, escopo = AUDIO_FORMATS, "áudio"
+    else:
+        catalog, escopo = VIDEO_FORMATS, "vídeo"
+
+    fmt = str(fmt or "").lower().strip()
+    if not fmt:
+        raise IsolarError(
+            f"Formato de saída não informado. Para {escopo}, opções válidas: "
+            + ", ".join(catalog) + "."
+        )
+    if fmt not in catalog:
+        raise _convert_target_error(fmt, kind)
+
+    src_ext = (src.suffix or "").lstrip(".").lower()
+    if fmt == src_ext and fmt != "copy":
+        warn(f"Origem e destino são ambos {fmt.upper()} — o arquivo será apenas recodificado.")
+
+    # Ao reconverter um arquivo gerado pelo isolar, reaproveita o nome base
+    # (senão acumularia "_convertido_convertido...").
+    stem = src.stem
+    if stem.endswith("_convertido"):
+        stem = stem[: -len("_convertido")]
+    sufixo = f"{stem}_convertido"
+    desc = f"Convertendo para {fmt.upper()}"
+
+    # ----- imagem → imagem -----
+    if kind == "image":
+        spec = IMAGE_FORMATS[fmt]
+        target = _resolve_target(output, sufixo, spec["ext"])
+        run_ffmpeg(
+            ["-i", str(src), "-c:v", *spec["video"], "-frames:v", "1", str(target)],
+            total_duration=None,
+            desc=desc,
+        )
+        return target
+
+    # ----- áudio → áudio (mesma mecânica do isolate_audio, sem -vn) -----
+    if kind == "audio":
+        if fmt == "copy":
+            container = _COPY_CONTAINERS.get(info["audio_codec"] or "")
+            if container:
+                target = _resolve_target(output, sufixo, container)
+                run_ffmpeg(
+                    ["-i", str(src), "-vn", "-c:a", "copy", str(target)],
+                    total_duration=info["duration"],
+                    desc="Remuxando áudio",
+                )
+                return target
+            warn(
+                f"Codec '{info['audio_codec']}' não tem container direto para cópia — "
+                "recodificando para MP3."
+            )
+            fmt = "mp3"
+        spec = AUDIO_FORMATS[fmt]
+        encode = list(spec["codec"])
+        if spec["bitrate"]:
+            encode += ["-b:a", bitrate or "192k"]
+        target = _resolve_target(output, sufixo, spec["ext"])
+        run_ffmpeg(
+            ["-i", str(src), "-vn", *encode, str(target)],
+            total_duration=info["duration"],
+            desc=desc,
+        )
+        return target
+
+    # ----- vídeo → vídeo / REMUX -----
+    if fmt == "copy":
+        # Cópia direta de TODOS os streams para o Matroska, que aceita
+        # praticamente qualquer combinação de codecs (vídeo, áudio e legendas).
+        target = _resolve_target(output, sufixo, "mkv")
+        run_ffmpeg(
+            [
+                "-i", str(src),
+                "-map", "0:v:0", "-map", "0:a:0?", "-map", "0:s?",
+                "-c", "copy", "-avoid_negative_ts", "make_zero",
+                str(target),
+            ],
+            total_duration=info["duration"],
+            desc="Remuxando para MKV",
+        )
+        return target
+
+    spec = VIDEO_FORMATS[fmt]
+
+    # ----- vídeo → gif animado (paleta de dois passes no mesmo comando) -----
+    if fmt == "gif":
+        width = min(480, info["width"] or 480)
+        vf = (
+            f"fps=12,scale={width}:-2:flags=lanczos,"
+            "split[a][b];[a]palettegen[p];[b][p]paletteuse"
+        )
+        target = _resolve_target(output, sufixo, "gif")
+        run_ffmpeg(
+            ["-i", str(src), "-vf", vf, "-an", "-sn", str(target)],
+            total_duration=info["duration"],
+            desc=desc,
+        )
+        return target
+
+    # ----- vídeo → vídeo (recodificação) -----
+    vcodec = spec["video"]
+    vid = ["-c:v", vcodec[0], *vcodec[1:]]
+    qmap = spec.get("quality") or {}
+    if qmap:
+        q = qmap.get(_normalize_quality(quality))
+        if q is not None:
+            vid += spec.get("qextra", []) + [spec["qflag"], q]
+    vid += spec.get("speed", [])
+    if spec.get("pixfmt"):
+        vid += ["-pix_fmt", spec["pixfmt"]]
+
+    audio = ["-c:a", *spec["audio"]] if info["has_audio"] else ["-an"]
+    target = _resolve_target(output, sufixo, spec["ext"])
+    run_ffmpeg(
+        ["-i", str(src), "-sn", *vid, *audio, *spec.get("mux", []), str(target)],
+        total_duration=info["duration"],
+        desc=desc,
+    )
+    return target

@@ -20,6 +20,7 @@ __all__ = [
     "InvalidTimeError",
     "check_dependencies",
     "get_media_info",
+    "detect_media_kind",
     "list_media",
     "run_ffmpeg",
     "parse_time",
@@ -245,7 +246,7 @@ def get_media_info(path: Union[str, "os.PathLike[str]"]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 _VIDEO_EXTS = frozenset({
-    ".mp4", ".m4v", ".mkv", ".avi", ".mov", ".webm", ".wmv", ".flv",
+    ".mp4", ".m4v", ".mkv", ".avi", ".mov", ".webm", ".wmv", ".flv", ".gif",
     ".mpg", ".mpeg", ".ts", ".m2ts", ".mts", ".3gp", ".3g2", ".ogv",
     ".mxf", ".vob", ".divx", ".asf",
 })
@@ -255,17 +256,28 @@ _AUDIO_EXTS = frozenset({
     ".wma", ".aiff", ".aif", ".ac3", ".dts", ".amr",
 })
 
+# Imagens não são "mídia" no isolar cut, mas entram no conversor.
+_IMAGE_EXTS = frozenset({
+    ".jpg", ".jpeg", ".jfif", ".png", ".webp", ".bmp", ".tif", ".tiff",
+    ".avif", ".heic", ".heif",
+})
+
 
 def list_media(directory: Optional[Union[str, Path]] = None, kind: str = "video") -> List[Path]:
     """Arquivos de mídia da pasta informada (padrão: cwd), ordenados por nome.
 
-    ``kind``: ``"video"`` | ``"audio"`` | ``"media"`` (vídeo + áudio).
+    ``kind``: ``"video"`` | ``"audio"`` | ``"image"`` | ``"media"`` (vídeo + áudio)
+    | ``"all"`` (tudo, usado pelo conversor).
     """
     folder = Path(directory or Path.cwd()).expanduser()
     if kind == "video":
         exts = _VIDEO_EXTS
     elif kind == "audio":
         exts = _AUDIO_EXTS
+    elif kind == "image":
+        exts = _IMAGE_EXTS
+    elif kind == "all":
+        exts = _VIDEO_EXTS | _AUDIO_EXTS | _IMAGE_EXTS
     else:
         exts = _VIDEO_EXTS | _AUDIO_EXTS
     try:
@@ -279,6 +291,27 @@ def list_media(directory: Optional[Union[str, Path]] = None, kind: str = "video"
     except OSError:
         return []
     return files
+
+
+def detect_media_kind(
+    src: Union[str, Path],
+    info: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Classifica o arquivo como ``"video"`` | ``"audio"`` | ``"image"``.
+
+    A extensão fala primeiro (imagens carregam um stream "de vídeo" no probe,
+    mas não são vídeos) e o ffprobe desempata o resto (vídeos mudos, áudios
+    com capa, etc.). Sem identificação, assume vídeo.
+    """
+    path = Path(src)
+    if (path.suffix or "").lower() in _IMAGE_EXTS:
+        return "image"
+    meta = info if info is not None else get_media_info(path)
+    if meta["has_video"]:
+        return "video"
+    if meta["has_audio"]:
+        return "audio"
+    return "video"
 
 
 # ---------------------------------------------------------------------------
